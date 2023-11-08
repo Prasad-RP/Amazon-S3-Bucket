@@ -28,7 +28,9 @@ public class S3Service {
 	public String uploadFile(MultipartFile file) {
 		log.info("uploading file");
 		String originalFilename = generateFileName(file);
-		s3Client.putObject(bucketName, originalFilename, fileConverter(file));
+		File fileObject = fileConverter(file);
+		s3Client.putObject(bucketName, originalFilename, fileObject);
+		fileObject.delete();
 		return originalFilename + " File uploaded Successfully.";
 	}
 
