@@ -1,6 +1,6 @@
 package com.s3.api;
 
-import java.io.IOException;
+import java.util.List;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +30,20 @@ public class AwsApi {
 	}
 
 	@GetMapping("/download/{fileName}")
-	public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) throws IOException {
+	public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) throws Exception {
 		byte[] bytes = s3Service.downloadFile(fileName);
 		ByteArrayResource resource = new ByteArrayResource(bytes);
-		return ResponseEntity.ok()
-				.contentLength(bytes.length)
-				.header("Content-type", "application/octet-stream")
-				.header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
-				.body(resource);
+		return ResponseEntity.ok().contentLength(bytes.length).header("Content-type", "application/octet-stream")
+				.header("Content-disposition", "attachment; filename=\"" + fileName + "\"").body(resource);
 	}
 
 	@DeleteMapping("/delete/{fileName}")
 	public ResponseEntity<Object> deleteFile(@PathVariable String fileName) {
 		return ResponseEntity.ok(s3Service.deleteFile(fileName));
+	}
+
+	@GetMapping("/allFiles")
+	public ResponseEntity<List<String>> getAllFiles() {
+		return ResponseEntity.ok(s3Service.getAllFilesFromBucket());
 	}
 }
