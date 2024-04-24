@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/aws")
-public class AwsApi {
+public class S3Api {
 
 	private final S3Service s3Service;
 
