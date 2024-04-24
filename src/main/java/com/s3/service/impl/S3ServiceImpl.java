@@ -44,7 +44,7 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public byte[] downloadFile(String fileName) throws Exception {
 		log.info("downloading file");
-		if (!isFileExistS3(fileName))
+		if (Boolean.FALSE.equals(isFileExistS3(fileName)))
 			throw new Exception(fileName + " File not found on server.");
 		S3Object s3Object = s3Client.getObject(bucketName, fileName);
 		return IOUtils.toByteArray(s3Object.getObjectContent());
@@ -53,7 +53,7 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public String deleteFile(String fileName) {
 		log.info("deleting file");
-		if (!isFileExistS3(fileName))
+		if (Boolean.FALSE.equals(isFileExistS3(fileName)))
 			return fileName + " File not found on server.";
 		s3Client.deleteObject(bucketName, fileName);
 		return fileName + " File deleted Successfully.";
@@ -106,12 +106,18 @@ public class S3ServiceImpl implements S3Service {
 	 * @return uniqueFile Name
 	 */
 	private String generateFileName(MultipartFile file) {
-		String st = file.getOriginalFilename() + System.currentTimeMillis();
+		String st = file.getOriginalFilename();
 		try {
 			st = st.replace(" ", "_");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		return st;
+	}
+
+	public String getS3UploadFileUrl(String s3Endpoint, String dir, String fileName) {
+		log.info("Generating file access URL from S3. s3Endpoint: {}, directory: {}, fileName: {}", s3Endpoint, dir,
+				fileName);
+		return s3Endpoint + "/" + dir + "/" + fileName;
 	}
 }
